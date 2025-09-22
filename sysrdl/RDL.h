@@ -354,17 +354,6 @@ void RDL() {
                     LPCSTR functionOrdinal = (LPCSTR)IMAGE_ORDINAL(thunk->u1.Ordinal);
                     thunk->u1.Function = (DWORD_PTR)MyGetProcAddress(library, functionOrdinal,MAX_FORWARDER_CHAIN);
                    
-                    // check mismatch with GetProcaddress
-                    /*FARPROC myAddr = MyGetProcAddress(library, functionOrdinal, MAX_FORWARDER_CHAIN);
-                    FARPROC realAddr = GetProcAddress(library, functionOrdinal);*/
-
-                    /*if (myAddr != realAddr) {
-                        printf("[!] MISMATCH: %s - Mine: %p, Real: %p\n",
-                            functionOrdinal, myAddr, realAddr);
-                        
-                    }
-                    thunk->u1.Function = (DWORD_PTR)myAddr;*/
-
                     
                 }
                 else
@@ -372,14 +361,6 @@ void RDL() {
                     PIMAGE_IMPORT_BY_NAME functionName = (PIMAGE_IMPORT_BY_NAME)((DWORD_PTR)remoteImage + thunk->u1.AddressOfData);
                     DWORD_PTR functionAddress = (DWORD_PTR)MyGetProcAddress(library, functionName->Name,MAX_FORWARDER_CHAIN);
                     thunk->u1.Function = functionAddress;
-                   /* FARPROC myAddr = MyGetProcAddress(library, functionName->Name, MAX_FORWARDER_CHAIN);
-                    FARPROC realAddr = GetProcAddress(library, functionName->Name);
-
-                    if (myAddr != realAddr) {
-                        printf("[!] MISMATCH: %s - Mine: %p, Real: %p\n",
-                            functionName->Name, myAddr, realAddr);
-                    }
-                    thunk->u1.Function = (DWORD_PTR)myAddr;*/
                 }
                 ++thunk;
             }
