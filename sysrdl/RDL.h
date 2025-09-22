@@ -353,8 +353,6 @@ void RDL() {
                 {
                     LPCSTR functionOrdinal = (LPCSTR)IMAGE_ORDINAL(thunk->u1.Ordinal);
                     thunk->u1.Function = (DWORD_PTR)MyGetProcAddress(library, functionOrdinal,MAX_FORWARDER_CHAIN);
-                   
-                    
                 }
                 else
                 {
