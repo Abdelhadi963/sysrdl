@@ -138,7 +138,7 @@ static FARPROC MyGetProcAddress(HMODULE hModule, LPCSTR lpProcName, int chainDep
                         HMODULE hForward = LoadLibraryA(forwarder);
                         if (!hForward) return NULL;
 
-                        // Simple infinite loop prevention: if same module and same name, fail
+                        // Simple infinite loop prevention: if same module and same name, fail !!
                         if (hForward == hModule && strcmp(funcName, lpProcName) == 0) {
                             printf("[ERROR] Circular forwarder detected: %s\n", lpProcName);
                             return NULL;
