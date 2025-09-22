@@ -18,6 +18,9 @@
     <ClCompile Include="sysrdl.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MyLoadLiberary.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="crypto.h">
@@ -27,6 +30,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="RDL.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MyGetProcAddress.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
