@@ -129,7 +129,8 @@
   <ItemGroup>
     <ClInclude Include="crypto.h" />
     <ClInclude Include="MyGetProcAddress.h" />
-    <ClInclude Include="MyLoadLiberaryA.h" />
+    <ClInclude Include="MyGetProcAddressNFW.h" />
+    <ClInclude Include="MyLoadLibraryW.h" />
     <ClInclude Include="prototype.h" />
     <ClInclude Include="RDL.h" />
   </ItemGroup>

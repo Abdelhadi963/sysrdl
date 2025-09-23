@@ -32,7 +32,10 @@
     <ClInclude Include="MyGetProcAddress.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="MyLoadLiberaryA.h">
+    <ClInclude Include="MyLoadLibraryW.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MyGetProcAddressNFW.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

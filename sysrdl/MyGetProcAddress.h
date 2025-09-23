@@ -1,6 +1,7 @@
 #pragma once
 #include <windows.h>
 #include <stdio.h>
+#include "MyLoadLibraryW.h"
 
 #define MAX_FORWARDER_CHAIN 10
 
@@ -14,6 +15,7 @@
 static FARPROC MyGetProcAddress(HMODULE hModule, LPCSTR lpProcName, int chainDepth) {
     UINT_PTR uiLibraryAddress = 0;
     FARPROC fpResult = NULL;
+    NTSTATUS status;
 
     if (hModule == NULL || lpProcName == NULL)
         return NULL;
@@ -74,7 +76,7 @@ static FARPROC MyGetProcAddress(HMODULE hModule, LPCSTR lpProcName, int chainDep
             {
                 // This is a forwarder
                 char* forwarderString = (char*)(uiLibraryAddress + functionRVA);
-                printf("[DEBUG] Ordinal %d forwarded to: %s\n", ordinal, forwarderString);
+                /*printf("[DEBUG] Ordinal %d forwarded to: %s\n", ordinal, forwarderString);*/
 
                 char forwarder[256] = { 0 };
                 strncpy_s(forwarder, sizeof(forwarder), forwarderString, _TRUNCATE);
@@ -84,7 +86,30 @@ static FARPROC MyGetProcAddress(HMODULE hModule, LPCSTR lpProcName, int chainDep
                 *dot = '\0';
                 char* funcName = dot + 1;
 
-                HMODULE hForward = LoadLibraryA(forwarder);
+                // Ensure forwarder module name ends with ".dll"
+                char forwarderModule[MAX_PATH] = { 0 };
+                strncpy_s(forwarderModule, sizeof(forwarderModule), forwarder, _TRUNCATE);
+
+                // Append ".dll" if not present
+                if (_stricmp(forwarderModule + strlen(forwarderModule) - 4, ".dll") != 0) {
+                    strcat_s(forwarderModule, sizeof(forwarderModule), ".dll");
+                }
+
+                
+                wchar_t wForwarder[MAX_PATH] = { 0 };
+                size_t converted = 0;
+                mbstowcs_s(&converted, wForwarder, MAX_PATH, forwarderModule, _TRUNCATE);
+
+         
+                status = MyLoadLibraryW(wForwarder);
+                if (status != NTSTATUS_SUCCESS) {
+                    wprintf(L"[!] Failed to load %ls: 0x%08X\n", wForwarder, status);
+                }
+
+                // Retrieve the module handle after loading
+                HMODULE hForward = MyGetModuleHandleW(wForwarder);
+
+                
                 if (!hForward) return NULL;
 
                 // Check if funcName is an ordinal
@@ -125,7 +150,7 @@ static FARPROC MyGetProcAddress(HMODULE hModule, LPCSTR lpProcName, int chainDep
                     {
                         // This is a forwarder
                         char* forwarderString = (char*)(uiLibraryAddress + functionRVA);
-                       /* printf("[DEBUG] %s forwarded to: %s\n", lpProcName, forwarderString);*/
+                        /*printf("[DEBUG] %s forwarded to: %s\n", lpProcName, forwarderString);*/
 
                         char forwarder[256] = { 0 };
                         strncpy_s(forwarder, sizeof(forwarder), forwarderString, _TRUNCATE);
@@ -135,7 +160,29 @@ static FARPROC MyGetProcAddress(HMODULE hModule, LPCSTR lpProcName, int chainDep
                         *dot = '\0';
                         char* funcName = dot + 1;
 
-                        HMODULE hForward = LoadLibraryA(forwarder);
+                        // Ensure forwarder module name ends with ".dll"
+                        char forwarderModule[MAX_PATH] = { 0 };
+                        strncpy_s(forwarderModule, sizeof(forwarderModule), forwarder, _TRUNCATE);
+
+                        // Append ".dll" if not present
+                        if (_stricmp(forwarderModule + strlen(forwarderModule) - 4, ".dll") != 0) {
+                            strcat_s(forwarderModule, sizeof(forwarderModule), ".dll");
+                        }
+
+                        
+                        wchar_t wForwarder[MAX_PATH] = { 0 };
+                        size_t converted = 0;
+                        mbstowcs_s(&converted, wForwarder, MAX_PATH, forwarderModule, _TRUNCATE);
+
+                        
+                        status = MyLoadLibraryW(wForwarder);
+                        if (status != NTSTATUS_SUCCESS) {
+                            wprintf(L"[!] Failed to load %ls: 0x%08X\n", wForwarder, status);
+                        }
+
+                        
+                        HMODULE hForward = MyGetModuleHandleW(wForwarder);
+
                         if (!hForward) return NULL;
 
                         // Simple infinite loop prevention: if same module and same name, fail !!

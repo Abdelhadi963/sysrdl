@@ -1,4 +1,3 @@
-#include "prototype.h"
 #include "crypto.h"
 #include "MyGetProcAddress.h"
 
@@ -337,10 +336,26 @@ void RDL() {
     LPCSTR libraryName = "";
     HMODULE library = NULL;
 
+    WCHAR wlibraryNameBuffer[MAX_PATH] = { 0 };
+
     while (importDescriptor->Name != NULL)
     {
         libraryName = (LPCSTR)importDescriptor->Name + (DWORD_PTR)remoteImage;
-        library = LoadLibraryA(libraryName);
+        // liberary = LoadLibraryA(libraryName);
+       // Convert ANSI DLL name to wide string
+        MultiByteToWideChar(CP_ACP, 0, libraryName, -1, wlibraryNameBuffer, MAX_PATH);
+
+        // quick forwarder :(
+        if (wcscmp(wlibraryNameBuffer, L"api-ms-win-crt-runtime-l1-1-0.dll") == 0)
+            wcscpy_s(wlibraryNameBuffer, MAX_PATH, L"ucrtbase.dll");
+
+        // Load DLL using wide name
+        status = MyLoadLibraryW(wlibraryNameBuffer);
+        if (status != NTSTATUS_SUCCESS) {
+            wprintf(L"[!] Failed to load %ls: 0x%08X\n", wlibraryNameBuffer, status);
+        }
+
+        library = MyGetModuleHandleW(wlibraryNameBuffer);
 
         if (library)
         {
