@@ -24,6 +24,7 @@
     <ProjectGuid>{8253384e-8143-40e9-b49e-d4f5096e36a4}</ProjectGuid>
     <RootNamespace>sysrdl</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>sysrdl</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

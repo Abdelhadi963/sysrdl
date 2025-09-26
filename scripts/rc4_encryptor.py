@@ -17,13 +17,13 @@ def encrypt_file(input_file, output_file, key):
 
 def main():
     parser = argparse.ArgumentParser(description="RC4 Encrypt a DLL")
-    parser.add_argument("--input-file", required=True, help="Path to the input DLL")
-    parser.add_argument("--output-file", required=True, help="Path for the encrypted output")
-    parser.add_argument("--key", required=True, help="RC4 key for encryption")
+    parser.add_argument("-i", required=True, help="Path to the input DLL")
+    parser.add_argument("-o", required=True, help="Path for the encrypted output")
+    parser.add_argument("-k", required=True, help="RC4 key for encryption")
 
     args = parser.parse_args()
 
-    encrypt_file(args.input_file, args.output_file, args.key)
+    encrypt_file(args.i, args.o, args.k)
 
 if __name__ == "__main__":
     main()

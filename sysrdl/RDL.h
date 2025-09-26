@@ -41,9 +41,7 @@ BOOL isKeyNotEmpty() {
 }
 
 void help() {
-    printf("Usage: sysrdl.exe <path_to_dll> [-k <decryption_key>]\n");
-    printf("Example: sysrdl.exe C:\\path\\to\\your.dll -k mysecret\n");
-    printf("If the DLL is not encrypted, omit the -k argument.\n");
+    printf("sysrdl.exe <path_to_dll> [-k <decryption_key>]\n");
     exit(1);
 }
 
@@ -393,65 +391,4 @@ void RDL() {
     SysNtFreeVirtualMemory((HANDLE)-1, &dllBytes, &dllSize, MEM_RELEASE);
     SysNtFreeVirtualMemory((HANDLE)-1, &remoteImage, &imageSize, MEM_RELEASE);
    
-}
-
-// ------------------------------- NOT USED IN THIS BUILD ------------------------------------------------
-// Get PID of target process by name For Remote Process Injection In the Future builds Not implemented yet
-// --------------------------------------------------------------------------------------------------------
-BOOL GetPIDDebug(PTARGET_INFO pTargetInfo) {
-    pTargetInfo->hPID = NULL;
-    printf("[*] Querying SystemProcessInformation to find process: %ws\n", pTargetInfo->ProcName.Buffer);
-
-    ULONG len = 0;
-    NTSTATUS status = SysZwQuerySystemInformation(SystemProcessInformation, NULL, 0, &len);
-
-    if (status != 0xC0000004) {
-        printf("[-] ZwQuerySystemInformation failed to get length: 0x%X\n", status);
-        return FALSE;
-    }
-
-    PVOID buffer = malloc(len);
-    if (!buffer) {
-        printf("[-] Memory allocation failed\n");
-        return FALSE;
-    }
-
-    ZeroMemory(buffer, len);
-
-    status = SysZwQuerySystemInformation(SystemProcessInformation, buffer, len, &len);
-    if (status != 0) {
-        printf("[-] ZwQuerySystemInformation failed: 0x%X\n", status);
-        free(buffer);
-        return FALSE;
-    }
-
-    PSYSTEM_PROCESSES pCurrent = (PSYSTEM_PROCESSES)buffer;
-    while (pCurrent) {
-
-        // Compare process name
-        if (pCurrent->ProcessName.Buffer &&
-            _wcsicmp(pCurrent->ProcessName.Buffer, pTargetInfo->ProcName.Buffer) == 0) {
-            pTargetInfo->hPID = pCurrent->ProcessId;
-            printf("[+] Found target process PID: %u\n", (ULONG)(ULONG_PTR)pCurrent->ProcessId);
-            break;
-        }
-
-        if (pCurrent->NextEntryDelta == 0)
-            break;
-
-        pCurrent = (PSYSTEM_PROCESSES)((PUCHAR)pCurrent + pCurrent->NextEntryDelta);
-    }
-
-    SIZE_T regionSize = len;
-    status = SysNtFreeVirtualMemory((HANDLE) - 1, &buffer, &regionSize, MEM_RELEASE);
-    if (status != STATUS_SUCCESS) {
-        printf("[-] SysNtFreeVirtualMemory failed: 0x%X\n", status);
-    }
-
-    if (!pTargetInfo->hPID) {
-        wprintf(L"[-] Process %ws not found.\n", pTargetInfo->ProcName.Buffer);
-        return FALSE;
-    }
-
-    return TRUE;
 }
