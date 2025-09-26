@@ -97,7 +97,6 @@ To make sure just use process explorer and kill rundll32.exe :) and session will
 this section will be added soon on how i implimented `GetModuleHandleW` ,`LoadLibraryW` and `GetProcAddress` & how the reloaction and every thing else works.
 
 ## Windows API references
-- `LoadLibraryW` — official Microsoft documentation: [LoadLibraryW (libloaderapi.h)](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibraryw). :contentReference[oaicite:0]{index=0}  
-- `GetProcAddress` — official Microsoft documentation: [GetProcAddress (libloaderapi.h)](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getprocaddress). :contentReference[oaicite:1]{index=1}
-
+- `LoadLibraryW` — official Microsoft documentation: [LoadLibraryW (libloaderapi.h)](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibraryw).
+- `GetProcAddress` — official Microsoft documentation: [GetProcAddress (libloaderapi.h)](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getprocaddress).
 
