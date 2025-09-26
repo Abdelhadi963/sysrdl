@@ -20,9 +20,7 @@ def main():
     parser.add_argument("-i", required=True, help="Path to the input DLL")
     parser.add_argument("-o", required=True, help="Path for the encrypted output")
     parser.add_argument("-k", required=True, help="RC4 key for encryption")
-
     args = parser.parse_args()
-
     encrypt_file(args.i, args.o, args.k)
 
 if __name__ == "__main__":
