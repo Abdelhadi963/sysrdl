@@ -86,6 +86,13 @@ load it we can spot the remote injection pattern from the resolved APIs.
 check our metasploit console we can see that we have got the callback ( remember defender is fully working but not catching us)
 <img width="1731" height="751" alt="image" src="https://github.com/user-attachments/assets/ed97cad7-7110-4e54-894c-753b6ef23297" />
 
+Now it's easy to check is injected to `Rundll32.exe` just use `getpid` grap your pid in meterprter session then we can get the process name using powershell as follow.
+```powershell
+ Get-CimInstance Win32_Process -Filter "ProcessId=<your pid from getpid>" | Select-Object ProcessId, ProcessName
+```
+<img width="1577" height="127" alt="image" src="https://github.com/user-attachments/assets/294f5169-38f4-49a9-9ebe-c133ae3509eb" />
+
+To make sure just use process explorer and kill rundll32.exe :) and session will die.
 # How it's Works !!
 this section will be added soon on how i implimented `GetModuleHandleW` ,`LoadLibraryW` and `GetProcAddress` & how the reloaction and every thing else works.
 
