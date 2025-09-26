@@ -93,7 +93,7 @@ Now it's easy to check is injected to `Rundll32.exe` just use `getpid` grap your
 <img width="1577" height="127" alt="image" src="https://github.com/user-attachments/assets/294f5169-38f4-49a9-9ebe-c133ae3509eb" />
 
 To make sure just use process explorer and kill rundll32.exe :) and session will die.
-# How it's Works !!
+# How it's Work !!
 this section will be added soon on how i implimented `GetModuleHandleW` ,`LoadLibraryW` and `GetProcAddress` & how the reloaction and every thing else works.
 
 ## Windows API references
